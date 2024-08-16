@@ -1,0 +1,98 @@
+﻿@model List<task5.Models.Details>
+
+@{
+    ViewBag.Title = "GetDetails";
+    Layout = "~/Views/_LayoutPage1.cshtml";
+    <script src="~/Scripts/jquery-3.7.1.js"></script>
+    <link href="~/Content/StyleSheet1.css" rel="stylesheet" />
+
+    <script src="~/Scripts/umd/popper.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+}
+
+<h2>GetDetails</h2>
+@Html.ActionLink("Create", "Index")
+
+@TempData["Success"]
+
+@using (Html.BeginForm("GetDetails", "Details", FormMethod.Get))
+{
+    @*<b> Search by</b> @Html.RadioButton("searchby", "Name", true)<b> Name</b>
+
+        <br />
+
+        @Html.TextBox("search")
+        <input type="submit" value=" Search" />*@
+    <div class="form-group">
+        <label for="searchName">Search by Name:</label>
+        <input type="text" class="form-control" id="searchName" name="searchstring" placeholder="Enter name">
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+    <div class="container mt-4">
+        <table class="table table-bordered table-striped" style=" w-75">
+
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Mobile</th>
+                    <th>State</th>
+                    <th>City</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.Name</td>
+                        <td>@user.Email</td>
+                        <td>@user.Mobile</td>
+                        <td>@user.StateId</td>
+                        <td>@user.CityId</td>
+                        <td>
+                            <a href="@Url.Action("EditHomePageCounters", new { id = user.Id })" class="btn btn-warning btn-sm" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+
+                            <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete(@user.Id)">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '@Url.Action("Delete", "Details")',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (response) {
+                        Swal.fire('Deleted!', 'The record has been deleted.', 'success');
+
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire('Error!', 'There was a problem deleting the record.', 'error');
+                    }
+                });
+            }
+        });
+    }
+</script>
